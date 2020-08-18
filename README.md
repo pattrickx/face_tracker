@@ -9,4 +9,5 @@ pip install Pillow
 pip install scipy
 pip install cmake 
 pip install dlib
+pip install ipython
 ```
