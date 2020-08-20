@@ -8,7 +8,7 @@ from scipy.spatial import distance as dist
 from io import BytesIO
 from IPython.display import  clear_output, Image, display
 from PIL import Image as Img
-from pynput.mouse import Controller
+from pynput.mouse import Controller, Button
 
 min_olho_esquerdo,min_olho_direito= (100,100)
 
@@ -119,16 +119,18 @@ def anotar_marcos_casca_convexa(imagem, marcos):
     y= p3[0,1]-p1[0,1]
 
     
-    # ar_olho_esq = round(aspecto_razao_olhos(marcos[0][OLHO_ESQUERDO]),3)
-    # ar_olho_dir = round(aspecto_razao_olhos(marcos[0][OLHO_DIREITO]),3)
-    # if ar_olho_esq< min_olho_esquerdo:
-    #     min_olho_esquerdo=ar_olho_esq
-    # if ar_olho_dir< min_olho_direito:
-    #     min_olho_direito=ar_olho_dir
-    # info_oe =f'olho esquerdo: {ar_olho_esq} minimo: {min_olho_esquerdo}'
-    # info_od =f'olho direito: {ar_olho_dir} minimo: {min_olho_direito}'
-    # cv2.putText(imagem,info_oe,(5,50), cv2.FONT_HERSHEY_SIMPLEX,0.3,(255,255,255), 1)
-    # cv2.putText(imagem,info_od,(10,80), cv2.FONT_HERSHEY_SIMPLEX,0.3,(255,255,255), 1)
+    ar_olho_dir = round(aspecto_razao_olhos(marcos[0][OLHO_ESQUERDO]),3)
+    ar_olho_esq = round(aspecto_razao_olhos(marcos[0][OLHO_DIREITO]),3)
+    if ar_olho_esq< min_olho_esquerdo:
+        min_olho_esquerdo=ar_olho_esq
+    if ar_olho_dir< min_olho_direito:
+        min_olho_direito=ar_olho_dir
+    info_oe =f'olho dir: {ar_olho_esq} minimo: {min_olho_esquerdo}'
+    info_od =f'olho esq: {ar_olho_dir} minimo: {min_olho_direito}'
+    cv2.putText(imagem,info_oe,(5,50), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)
+    cv2.putText(imagem,info_od,(10,80), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)
+    if (ar_olho_dir>0.19 and ar_olho_esq<0.19):
+        mouse.click(Button.left)
     return imagem
 
 def padronizar_imagem(frame):
