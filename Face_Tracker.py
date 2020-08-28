@@ -11,7 +11,8 @@ from PIL import Image as Img
 from pynput.mouse import Controller, Button
 
 min_olho_esquerdo,min_olho_direito= (100,100)
-
+x_n=[]
+y_n=[]
 # FACE = list(range(17, 68))
 # FACE_COMPLETA = list(range(0, 68))
 # LABIO = list(range(48, 61))
@@ -40,14 +41,13 @@ def aspecto_razao_olhos(pontos_olhos):
     a = dist.euclidean(pontos_olhos[1], pontos_olhos[5])
     b = dist.euclidean(pontos_olhos[2], pontos_olhos[4])
     c = dist.euclidean(pontos_olhos[0], pontos_olhos[3])
-    
     aspecto_razao = (a + b)/(2.0 * c)
     
     return aspecto_razao
 
 def anotar_marcos_casca_convexa(imagem, marcos):
     retangulos = detector_face(imagem, 1)
-    global min_olho_esquerdo,min_olho_direito
+    global min_olho_esquerdo,min_olho_direito,x_n,y_n
 
     if len(retangulos) == 0:
         return None
@@ -114,11 +114,40 @@ def anotar_marcos_casca_convexa(imagem, marcos):
     y= int((y-ytop)/(ybottom-ytop)*1024)
     mouse = Controller()
     # print(x)
-    
+    media_movel=3
+    if(len(x_n)>media_movel):
+        x_n.pop(0)
+        x_n.append(x)
+    else:
+        x_n.append(x)
+
+    if(len(y_n)>media_movel):
+        y_n.pop(0)
+        y_n.append(y)
+    else:
+        y_n.append(y)
+
+    xs=0
+    for i in x_n:
+        xs+=i
+    ys=0
+    for i in y_n:
+        ys+=i
+    x= xs/len(x_n)
+    y= ys/len(y_n)
     mouse.position=(x,y)
     y= p3[0,1]-p1[0,1]
-
-    
+    # def test(pontos_olhos1,pontos_olhos2):
+    #     a1 = dist.euclidean(pontos_olhos1[1], pontos_olhos1[5])
+    #     b1 = dist.euclidean(pontos_olhos1[2], pontos_olhos1[4])
+    #     c1 = dist.euclidean(pontos_olhos1[0], pontos_olhos1[3])
+    #     a2 = dist.euclidean(pontos_olhos2[1], pontos_olhos2[5])
+    #     b2 = dist.euclidean(pontos_olhos2[2], pontos_olhos2[4])
+    #     c2 = dist.euclidean(pontos_olhos2[0], pontos_olhos2[3])
+    #     print('a: ',a1,' | ',a2)
+    #     print('b: ',b1,' | ',b2)
+    #     print()
+    # test(marcos[0][OLHO_DIREITO],marcos[0][OLHO_ESQUERDO])
     ar_olho_dir = round(aspecto_razao_olhos(marcos[0][OLHO_ESQUERDO]),3)
     ar_olho_esq = round(aspecto_razao_olhos(marcos[0][OLHO_DIREITO]),3)
     if ar_olho_esq< min_olho_esquerdo:
@@ -129,6 +158,7 @@ def anotar_marcos_casca_convexa(imagem, marcos):
     info_od =f'olho esq: {ar_olho_dir} minimo: {min_olho_direito}'
     cv2.putText(imagem,info_oe,(5,50), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)
     cv2.putText(imagem,info_od,(10,80), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)
+
     if (ar_olho_dir>0.19 and ar_olho_esq<0.19):
         mouse.click(Button.left)
     return imagem
