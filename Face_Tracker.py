@@ -88,13 +88,13 @@ def anotar_marcos_casca_convexa(imagem, marcos):
     cv2.line(imagem,(p1[0,0],p1[0,1]),(p2[0,0],p2[0,1]),(0,255,0), 1)
     cv2.line(imagem,(p1[0,0],p1[0,1]),(p4[0,0],p4[0,1]),(0,255,0), 1)
     cv2.line(imagem,(p4[0,0],p4[0,1]),(p3[0,0],p3[0,1]),(0,255,0), 1)
-    x= p2[0,0]-p[0,0]
-    x= (p1[0,0]-p[0,0])/x
+    x= np.linalg.norm(p2-p)
+    x= np.linalg.norm(p1-p)/x
     xleft=0.3
     xhight=0.70
 
-    y= p3[0,1]-p1[0,1]
-    y= (p4[0,1]-p1[0,1])/y
+    y=np.linalg.norm(p3-p1)
+    y=np.linalg.norm(p4-p1)/y
     ytop=0.19
     ybottom=0.35
     cv2.putText(imagem,f'x= {round(x,3)}',(10,10), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)

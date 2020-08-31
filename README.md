@@ -1,13 +1,16 @@
 # Face Tracker
 ## Dependencies
+
+To install the dependencies use the next command changing the **your_path** for the path of your projet:
 ```
-pip install numpy
-pip install matplotlib
-pip install opencv-python
-pip install pynput
-pip install Pillow
-pip install scipy
-pip install cmake 
-pip install dlib
-pip install ipython
+sh your_path/start.sh
+```
+sample:
+```
+sh /home/pi/Desktop/Face_Tracker/dep.sh
+```
+# Run 
+for run the projet use in your terminal:
+```
+python3 Face_Tracker.py
 ```
