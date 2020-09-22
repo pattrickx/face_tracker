@@ -10,11 +10,10 @@ from IPython.display import  clear_output, Image, display
 from PIL import Image as Img
 from pynput.mouse import Controller, Button
 
-min_olho_esquerdo,min_olho_direito,= (100,100)
+
 x_n=[]
 y_n=[]
-ar_olho_esq_n =[]
-ar_olho_dir_n =[]
+ar_boca_n =[]
 # FACE = list(range(17, 68))
 # FACE_COMPLETA = list(range(0, 68))
 LABIO = list(range(48, 61))
@@ -38,14 +37,6 @@ def pontos_marcos_faciais(img):
         marcos.append(np.matrix([[p.x,p.y] for p in classificador_dlib(img,ret).parts()]))
     return marcos
 
-def aspecto_razao_olhos(pontos_olhos):
-    
-    a = dist.euclidean(pontos_olhos[1], pontos_olhos[5])
-    b = dist.euclidean(pontos_olhos[2], pontos_olhos[4])
-    c = dist.euclidean(pontos_olhos[0], pontos_olhos[3])
-    aspecto_razao = (a + b)/(2.0 * c)
-    
-    return aspecto_razao
 def aspecto_razao_boca(pontos_boca):
     
     a = dist.euclidean(pontos_boca[3], pontos_boca[9])
@@ -57,7 +48,7 @@ def aspecto_razao_boca(pontos_boca):
     return aspecto_razao
 def anotar_marcos_casca_convexa(imagem, marcos):
     retangulos = detector_face(imagem, 1)
-    global min_olho_esquerdo,min_olho_direito,x_n,y_n,ar_olho_dir_n,ar_olho_esq_n
+    global x_n,y_n,ar_boca_n
 
     if len(retangulos) == 0:
         return None
@@ -153,61 +144,23 @@ def anotar_marcos_casca_convexa(imagem, marcos):
     y= ys/len(y_n)
     mouse.position=(x,y)
     y= p3[0,1]-p1[0,1]
-    # def test(pontos_olhos1,pontos_olhos2):
-    #     a1 = dist.euclidean(pontos_olhos1[1], pontos_olhos1[5])
-    #     b1 = dist.euclidean(pontos_olhos1[2], pontos_olhos1[4])
-    #     c1 = dist.euclidean(pontos_olhos1[0], pontos_olhos1[3])
-    #     a2 = dist.euclidean(pontos_olhos2[1], pontos_olhos2[5])
-    #     b2 = dist.euclidean(pontos_olhos2[2], pontos_olhos2[4])
-    #     c2 = dist.euclidean(pontos_olhos2[0], pontos_olhos2[3])
-    #     print('a: ',a1,' | ',a2)
-    #     print('b: ',b1,' | ',b2)
-    #     print()
-    # test(marcos[0][OLHO_DIREITO],marcos[0][OLHO_ESQUERDO])
-    # ar_olho_dir = round(aspecto_razao_olhos(marcos[0][OLHO_ESQUERDO]),3)
-    # ar_olho_esq = round(aspecto_razao_olhos(marcos[0][OLHO_DIREITO]),3)
+
+
     boca = round(aspecto_razao_boca(marcos[0][LABIO]),3)
-    # if ar_olho_esq< min_olho_esquerdo:
-    #     min_olho_esquerdo=ar_olho_esq
-    # if ar_olho_dir< min_olho_direito:
-    #     min_olho_direito=ar_olho_dir
-    # info_oe =f'olho dir: {ar_olho_esq} minimo: {min_olho_esquerdo}'
-    # info_od =f'olho esq: {ar_olho_dir} minimo: {min_olho_direito}'
-    # print(info_oe)
-    # print(info_od)
-    # cv2.putText(imagem,info_oe,(5,50), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)
-    # cv2.putText(imagem,info_od,(10,80), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)
-#   
-    
-    # if(len(ar_olho_dir_n)>media_movel):
-    #     ar_olho_dir_n.pop(0)
-    #     ar_olho_dir_n.append(ar_olho_dir)
+
+    # media_movel=5
+    # if(len(ar_boca_n)>media_movel):
+    #     ar_boca_n.pop(0)
+    #     ar_boca_n.append(ar_boca)
     # else:
-    #     ar_olho_dir_n.append(ar_olho_dir)
-    # ar_olho_dir_s=0
+    #     ar_boca_n.append(ar_boca)
+    # boca_s=0
 
-    # for i in ar_olho_dir_n:
-    #     ar_olho_dir_s+=i
-
-    # ar_olho_dir= ar_olho_dir_s/len(ar_olho_dir_n)
-    
-    # if(len(ar_olho_esq_n)>media_movel):
-    #     ar_olho_esq_n.pop(0)
-    #     ar_olho_esq_n.append(ar_olho_esq)
-    # else:
-    #     ar_olho_esq_n.append(ar_olho_esq)
-    # ar_olho_esq_s=0
-
-    # for i in ar_olho_esq_n:
-    #     ar_olho_esq_s+=i
-
-    # ar_olho_esq= ar_olho_esq_s/len(ar_olho_esq_n)
-
-    # info_oe =f'olho dir: {ar_olho_esq} olho esq: {ar_olho_dir}'
-    
-    print(boca)
+    # for i in ar_boca_n:
+    #     boca_s+=i
+    # boca= boca_s/len(ar_boca_n)
+    # print(boca)
    
-    # if (ar_olho_dir>0.19 and ar_olho_esq<0.15):
     if (boca>0.6):
         mouse.click(Button.left)
     return imagem
