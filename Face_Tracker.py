@@ -52,49 +52,13 @@ def anotar_marcos_casca_convexa(imagem, marcos):
 
     if len(retangulos) == 0:
         return None
-    # for k, d in enumerate(retangulos):
-    #     # print(f'Identificado rosto: {k}')
-    #     cv2.rectangle(imagem,(d.left(),d.top()),(d.right(),d.bottom()),(255,255,0),2)
-    p=[]
-    p1=[]
-    p2=[]
-    p3=[]
-    p4=[]
 
-    for idx, ret in enumerate(retangulos):
-        marco = marcos[idx]
-        
-        pontos = cv2.convexHull(marco[LABIO])
-        cv2.drawContours(imagem, [pontos], 0, (0,255,0), 1)
-    for marco in marcos:
-        for idx,ponto in enumerate(marco):
-            # print(ponto)
-            centro =(ponto[0,0],ponto[0,1])
-            if idx==0:
-                p=ponto
-                # cv2.circle(imagem,centro,3,(255,255,0),-1)
-                # cv2.putText(imagem,str(idx),centro, cv2.FONT_HERSHEY_SIMPLEX,0.3,(255,255,255), 1)
-            if idx==27:
-                p1=ponto
-                # cv2.circle(imagem,centro,3,(255,255,0),-1)
-                # cv2.putText(imagem,str(idx),centro, cv2.FONT_HERSHEY_SIMPLEX,0.3,(255,255,255), 1)
-            if idx==16:
-                p2=ponto
-                # cv2.circle(imagem,centro,3,(255,255,0),-1)
-                # cv2.putText(imagem,str(idx),centro, cv2.FONT_HERSHEY_SIMPLEX,0.3,(255,255,255), 1)
-            if idx==8:
-                p3=ponto
-                # cv2.circle(imagem,centro,3,(255,255,0),-1)
-                # cv2.putText(imagem,str(idx),centro, cv2.FONT_HERSHEY_SIMPLEX,0.3,(255,255,255), 1)
-            if idx==30:
-                p4=ponto
-                # cv2.circle(imagem,centro,3,(255,255,0),-1)
-                # cv2.putText(imagem,str(idx),centro, cv2.FONT_HERSHEY_SIMPLEX,0.3,(255,255,255), 1)
-   
-    # cv2.line(imagem,(p[0,0],p[0,1]),(p1[0,0],p1[0,1]),(0,255,0), 1)
-    # cv2.line(imagem,(p1[0,0],p1[0,1]),(p2[0,0],p2[0,1]),(0,255,0), 1)
-    # cv2.line(imagem,(p1[0,0],p1[0,1]),(p4[0,0],p4[0,1]),(0,255,0), 1)
-    # cv2.line(imagem,(p4[0,0],p4[0,1]),(p3[0,0],p3[0,1]),(0,255,0), 1)
+    p = marcos[0][0]
+    p1 = marcos[0][27]
+    p2 = marcos[0][16]
+    p3 = marcos[0][8]
+    p4 = marcos[0][30]
+
     x= np.linalg.norm(p2-p)
     x= np.linalg.norm(p1-p)/x
     xleft=0.3
@@ -104,9 +68,7 @@ def anotar_marcos_casca_convexa(imagem, marcos):
     y=np.linalg.norm(p4-p1)/y
     ytop=0.19
     ybottom=0.35
-    # cv2.putText(imagem,f'x= {round(x,3)}',(10,10), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)
-    # cv2.putText(imagem,f'y= {round(y,3)}',(10,30), cv2.FONT_HERSHEY_SIMPLEX,0.4,(255,255,255), 1)
-    
+
     if x<xleft:
         x=xleft
     if x>xhight:
@@ -148,19 +110,6 @@ def anotar_marcos_casca_convexa(imagem, marcos):
 
     boca = round(aspecto_razao_boca(marcos[0][LABIO]),3)
 
-    # media_movel=5
-    # if(len(ar_boca_n)>media_movel):
-    #     ar_boca_n.pop(0)
-    #     ar_boca_n.append(ar_boca)
-    # else:
-    #     ar_boca_n.append(ar_boca)
-    # boca_s=0
-
-    # for i in ar_boca_n:
-    #     boca_s+=i
-    # boca= boca_s/len(ar_boca_n)
-    # print(boca)
-   
     if (boca>0.6):
         mouse.click(Button.left)
     return imagem
